@@ -13,16 +13,16 @@ import (
 	pusher "github.com/pusher/pusher-http-go"
 )
 
-var client = pusher.Client {
-	AppId: "718203",
-    Key:     "f8d69e9bfe47062288d9",
-    Secret:  "147e3ab0a7cfe8602c06",
+var client = pusher.Client{
+	AppID:   "718203",
+	Key:     "f8d69e9bfe47062288d9",
+	Secret:  "147e3ab0a7cfe8602c06",
 	Cluster: "us2",
-	Secure: true,
+	Secure:  true,
 }
 
 type Photo struct {
-	ID int64 `json:"id"`
+	ID  int64  `json:"id"`
 	Src string `json:"src"`
 }
 
@@ -102,7 +102,6 @@ func uploadPhoto(db *sql.DB) echo.HandlerFunc {
 		filePath := "./public/uploads/" + file.Filename
 
 		fileSrc := "http://127.0.0.1:9000/uploads/" + file.Filename
-		
 		dst, err := os.Create(filePath)
 
 		if err != nil {
@@ -135,9 +134,9 @@ func uploadPhoto(db *sql.DB) echo.HandlerFunc {
 			panic(err)
 		}
 
-		photo := Photo {
+		photo := Photo{
 			Src: fileSrc,
-			ID: insertedId,
+			ID:  insertedId,
 		}
 
 		client.Trigger("photo-stream", "new-photo", photo)
@@ -145,7 +144,7 @@ func uploadPhoto(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-func main(){
+func main() {
 	db := initialiseDatabase("database/database.sqlite")
 
 	migrateDatabase(db)
@@ -160,5 +159,4 @@ func main(){
 	e.POST("/photos", uploadPhoto(db))
 	e.Static("/uploads", "public/uploads")
 
-	e.Logger.Fatal(e.Start(":9000"))
 }
